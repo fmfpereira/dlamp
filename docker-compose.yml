@@ -1,0 +1,63 @@
+# Docker compose file for basic environment php stack.
+
+# Docker compose version
+version: '3'
+
+# Docker compose services.
+services:
+  # Docker web service.
+  web:
+    # Configuration options that are applied at build time.
+    build: 
+      # Using Dockerfile
+      context: .docker/php5.6
+      # Overrides build arguments, which are environment variables accessible only during the build process.
+      args:
+        - DOCKER_APACHE_RUN_USER=www-data
+        - DOCKER_APACHE_RUN_GROUP=www-data
+        - DOCKER_APACHE_RUN_UID=33
+        - DOCKER_APACHE_RUN_GID=33
+    # Expose ports.
+    ports:
+      - "80:80"
+      - "9000:9000"
+    # Link to containers in another service.
+    links:
+      - db:percona
+    # Mount host paths or named volumes.
+    volumes:
+      # Host path volume for project docroot.
+      - ./data/docroot:/var/www/html
+      # Host path volume for php.ini configuration file.
+      - ./conf/php.ini:/usr/local/etc/php/php.ini
+      # Host path volume for apache default.conf file.
+      - ./conf/apache-default.conf:/etc/apache2/sites-available/000-default.conf
+  # Docker db service.
+  db:
+    # Specify the image to start the container from.
+    image: percona
+    # Expose ports
+    ports:
+      - "3306"
+    # Mount host paths or named volumes.
+    volumes:
+      # Named volume for percona data.
+      - percona_data:/var/lib/mysql
+      # Host path volume for docker-entrypoint-initdb.d folder.
+      # Percona import sql dumps from this folder if database is not created.
+      - ./data/mysql/import:/docker-entrypoint-initdb.d
+      # Host path volume for percona custom configuration file.
+      - ./conf/my.cnf:/etc/mysql/percona-server.conf.d/mysql_custom.cnf
+    # Add environment variables.
+    # Percona enviroment variables. 
+    # Check https://hub.docker.com/_/percona/ for more information.
+    environment:
+      - MYSQL_ROOT_PASSWORD=db
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=db
+      - MYSQL_PASSWORD=db
+
+# Named volumes
+volumes:
+  percona_data:
+    driver: "local"
