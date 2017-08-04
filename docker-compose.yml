@@ -20,6 +20,7 @@ services:
     # Expose ports.
     ports:
       - "80:80"
+      - "3306:3306"
     # Link to containers in another service.
     links:
       - db:percona
