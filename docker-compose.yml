@@ -26,11 +26,11 @@ services:
     # Mount host paths or named volumes.
     volumes:
       # Host path volume for project docroot.
-      - ./data/docroot:/var/www/html
+      - ./data/apache:/var/www/html
       # Host path volume for php.ini configuration file.
       - ./conf/php.ini:/usr/local/etc/php/php.ini
       # Host path volume for apache default.conf file.
-      - ./conf/apache-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./conf/apache.conf:/etc/apache2/sites-available/000-default.conf
   # Docker db service.
   db:
     # Specify the image to start the container from.
