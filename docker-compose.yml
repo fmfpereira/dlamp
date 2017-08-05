@@ -19,8 +19,7 @@ services:
         - DOCKER_APACHE_RUN_GID=33
     # Expose ports.
     ports:
-      - "80:80"
-      - "3306:3306"
+      - "80"
     # Link to containers in another service.
     links:
       - db:percona

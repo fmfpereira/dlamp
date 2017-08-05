@@ -14,95 +14,167 @@ dLAMP is a Docker Compose configuration to run LAMP development stack containers
 
 ## Background
 
-dLAMP was created to build a simple solution for LAMP development environments. It provides a solid starting point which you can optimize for your needs.
+dLAMP was created to build a simple solution for LAMP development environments. It provides a solid starting point which can be optimized for your needs.
 
-With dLamp you will orchestrate two containers:
+With dLAMP you will orchestrate two containers:
 
-* [PHP/Apache](https://hub.docker.com/_/php) with XDebug.
-* [MySQL (Percona)](https://hub.docker.com/_/percona).
+- [PHP/Apache](https://hub.docker.com/_/php) with XDebug.
+- [MySQL (Percona)](https://hub.docker.com/_/percona).
 
-Project directory structure:
-* conf (configuration files).
-* data (Apache docroot and Mysql dump importer).
-* docker-compose.yml (Docker Compose file)
-* .docker (Docker files)
-
-The following container files/directories will be shared within your host:
-
-* Configuration files
-    * php.ini (overrides default PHP configuration).
-    * my.cnf (overrides default MySQL configuration).
-    * apache-default.conf (overrides default Apache configuration).
-
-* Directories
-    * /var/www/html (shares docroot with host).
-    * /var/lib/mysql (stores data files on host via named volumes).
-    * /docker-entrypoint-initdb.d (automatically import MySQL dumps when the container named volume is created).
+Project structure:
+- conf (project configuration folder)
+  - php.ini (overrides default PHP configuration)
+  - my.cnf (overrides default MySQL configuration)
+  - apache.conf (overrides default Apache VirtualHost)
+- data (project data folder)
+  - apache (parent docroot folder)
+     - web (docroot folder)
+  - mysql
+     - import (automatically import MySQL dumps files when the container named volume is created)
+- docker-compose.yml (Docker Compose file)
+- .docker (Docker files)
+  - php5.6 (PHP 5.6 Dockerfile folder)
+  - php7 (PHP 7 Dockerfile folder)
 
 ## Requirements
-- Docker
+- docker
+- docker-compose
 
 ## Installation
 
 - [Download](https://github.com/fmfpereira/dlamp/releases) or [clone](https://github.com/fmfpereira/dlamp.git) the project.
 
 - Edit docker-compose.yml file.
-    - Select PHP version: services -> web-> build -> context.
-        - Currently dLAMP supports php5.6 and php7:
-            - php5.6 uses Dockerfile .docker/php5.6
-            - php7 uses Dockerfile .docker/php7
-    - Select which user/uid and group/gid will be used for the Apache process: services -> web -> build -> arguments.
-        - DOCKER_APACHE_RUN_USER, DOCKER_APACHE_RUN_GROUP, DOCKER_APACHE_RUN_UID, DOCKER_APACHE_RUN_GID
+    - Select PHP version:
+        - For PHP 7 use .docker/php7. For PHP 5.6 use .docker/php5.6.
+            ```yml
+            # Docker compose services.
+            services:
+            # Docker web service.
+              web:
+                # Configuration options that are applied at build time.
+                build: 
+                  # Using Dockerfile
+                  context: .docker/php5.6
+            ```    
+    - Select which user and group will be used for the Apache process:
         - When using Docker for Linux the file owner uid and gid will be shared across both host and container.
             - By default, Apache uses the uid and gid 33 (www-data). 
             - When you create a file on the container it will use the same uid and gid on host system.
             - You need to set your host user uid and gid on the container to avoid permissions problems.
-    - Select database name and credentials on db -> environment.
-        - MYSQL_ROOT_PASSWORD, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD
+        - You can leave the default settings if you use Docker for Windows or Docker for Mac.
+        ```yml
+        # Overrides build arguments, which are environment variables accessible only during the build process.
+        args:
+          - DOCKER_APACHE_RUN_USER=www-data
+          - DOCKER_APACHE_RUN_GROUP=www-data
+          - DOCKER_APACHE_RUN_UID=33
+          - DOCKER_APACHE_RUN_GID=33
+        ```
+    - Select database name and credentials:
+        ```yml
+        # Add environment variables.
+        # Percona environment variables. 
+        # Check https://hub.docker.com/_/percona/ for more information.
+        environment:
+          - MYSQL_ROOT_PASSWORD=db
+          - MYSQL_DATABASE=db
+          - MYSQL_USER=db
+          - MYSQL_PASSWORD=db
+        ```
+    - Select container exposed ports:
+        - web container:
+            ```yml
+            web:
+              # Expose ports.
+              ports:
+             - "80"
+            ```
+        - db container:
+            ```yml
+            db:
+              # Expose ports.
+              ports:
+             - "3306"
+            ```      
+        - You can either specify both ports (HOST:CONTAINER), or just the container port (a random host port will be chosen).
+            - You can check the mapped ports after starting a container:
+                ```sh
+                [docker-user@docker-host dummy]$ docker ps
+                CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                     NAMES
+                ab1aeeb4ad5a        dummy_web            "docker-php-entryp..."   17 seconds ago      Up 16 seconds       0.0.0.0:80->80/tcp        dummy_web_1
+                1bac80458a96        percona              "docker-entrypoint..."   18 seconds ago      Up 17 seconds       0.0.0.0:32769->3306/tcp   dummy_db_1
+                ```
+            - In this configuration the web container has been explicitly mapped to port 80 and the db container randomly mapped to port 32769.
+        - Each port mapping on the host must be unique per running container. If you need to explicitly map ports on the host, each host port must be unique per running container.
+            - Eg. You can explicitly map container port 80 (WWW) to host port 80, but you must be sure that no other host process or container is running on the port.
+            - Eg. If you need to run two dLAMP projects at the same time, either leave the default options to generate the host ports randomly or explicitly map different unused ports.
+
     - If you want to know more details about docker-compose.yml configuration options, check the [Docker Compose file version 3 reference](https://docs.docker.com/compose/compose-file/).
 
-- Create the Docker image
+- Create the Docker image:
 ```sh
-docker-compose build
+[docker-user@docker-host dummy]$ docker-compose build
 ```
     
 ## Usage
 
 - Run the containers:
     ```sh
-    docker-compose up -d
+    [docker-user@docker-host dummy]$ docker-compose up -d
     ```
 
-- Attach shell to docker container
+- Attach bash shell to docker container:
     ```sh
-    docker exec -u "username" -ti "apache/php container hash" /bin/bash
+    [docker-user@docker-host dummy]$ docker ps
+    CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                     NAMES
+    ab1aeeb4ad5a        dummy_web            "docker-php-entryp..."   17 seconds ago      Up 16 seconds       0.0.0.0:80->80/tcp        dummy_web_1
+    1bac80458a96        percona              "docker-entrypoint..."   18 seconds ago      Up 17 seconds       0.0.0.0:32769->3306/tcp   dummy_db_1
+    [docker-user@docker-host dummy]$ docker exec -u www-data -ti ab1 /bin/bash
     ```
+
+    - If you are using Linux, replace www-data for the username set on docker-compose.yml.
+    - If you are using MacOS or Windows you can ignore the -u username option.
+
 
 - Destroy the containers:
     ```sh
-    docker-compose down
+    [docker-user@docker-host dummy]$ docker-compose down
     ```
 
 - When you destroy the containers the MySQL data volume will not be removed. To remove the volume:
     ```sh
-    docker volume ls
-    docker volume rm "mysql_volume_name"
+    [docker-user@docker-host dummy]$ docker volume ls
+    DRIVER              VOLUME NAME
+    local               2410b28798dd403b26456ba9e3feed27ae642e404eac7a4ff67f0096318f0465
+    local               ef6d9e0e1b05740be7973a8ffd0cfbbe3ad9aa1ccbcb7f0ac274f6145a603d9a
+    local               dummy_percona_data
+    [docker-user@docker-host dummy]$ docker volume rm dummy_percona_data
     ```
 
-- To import database dumps automatically:
+- To import the database dumps automatically:
     - The MySQL data volume should not exist:
-        - You are executing Docker Compose for the first time.
+        - You are running the containers for the first time.
         - You removed the MySQL data volume.
-    - Place your .sh, .sql and .sql.gz files on the host data/mysql/import host directory.
+    - Place your .sh, .sql and .sql.gz files on the host mysql import folder.
     - Run the containers.
 
 - MySQL and Apache/PHP containers are different hosts.
-    - To connect from Apache/PHP to MySQL you should replace "localhost" to "db" (the MySQL hostname in the Docker network) 
+    - To connect from Apache/PHP container to MySQL container you should replace "localhost" to "db" (the MySQL hostname in the Docker network) 
 
 ## Known limitations
 
-Apache process user will be created and assigned at build time. Each time you need to change the user/uid and group/gid you must re-build the image.
+- General
+    - Apache process user will be created and assigned at build time. Each time you change any DOCKER_APACHE_RUN_* variable you must re-build the image.
 
+- Windows
+    - If you use this project on other path rather than C:\Users (Eg. E:\\) the containers may not start.
+        - You should add the path to Shared Folders on Docker options, if available.
+        - If you are still struggling to run the project, try to run it on any C:\Users sub-folder.
+
+- MacOS (Docker4Mac)
+    - There is a known issue around slow performance using shared volumes on Docker for Mac.
+    - If you have any performance issues please read the official [Docker Documentation](https://docs.docker.com/docker-for-mac/osxfs-caching/).
 ## Support
 
 Please [open an issue](https://github.com/fmfpereira/dlamp/issues/new) for support.
