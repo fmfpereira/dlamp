@@ -1,9 +1,11 @@
 sudo: required
 
-language: ruby
-
 services:
   - docker
+
+branches:
+  only:
+  - master
 
 before_install:
   # Update Docker Engine
