@@ -1,36 +1,6 @@
 FROM php:5.6-apache
 MAINTAINER fmfpereira@gmail.com
 
-# BUILD ARGUMENTS
-ARG DOCKER_APACHE_RUN_USER=www-data
-ARG DOCKER_APACHE_RUN_GROUP=www-data
-ARG DOCKER_APACHE_RUN_UID=33
-ARG DOCKER_APACHE_RUN_GID=33
-
-# ENVIRONMENT VARIABLES
-ENV APACHE_RUN_USER=$DOCKER_APACHE_RUN_USER
-ENV APACHE_RUN_GROUP=$DOCKER_APACHE_RUN_GROUP
-ENV APACHE_RUN_UID=$DOCKER_APACHE_RUN_UID
-ENV APACHE_RUN_GID=$DOCKER_APACHE_RUN_GID
-ENV PATH="/var/www/html/vendor/bin:${PATH}"
-
-# CREATE USER IF NEW AND SET AS APACHE USER AND GROUP
-RUN set -xe; \
-  \
-  if [ -z $(getent group $APACHE_RUN_GROUP) ]; then \
-    echo "Creating group $APACHE_RUN_GROUP"; \
-    groupadd --gid $APACHE_RUN_GID $APACHE_RUN_GROUP; \
-  else \
-    echo "Ignoring group $APACHE_RUN_GROUP: already exists"; \
-  fi; \
-  \
-  if [ -z $(getent passwd $APACHE_RUN_USER) ]; then \
-    echo "Creating user $APACHE_RUN_USER"; \
-    useradd $APACHE_RUN_USER --uid $APACHE_RUN_UID --gid $APACHE_RUN_GROUP --create-home --shell /bin/bash; \
-  else \
-    echo "Ignoring user $APACHE_RUN_USER: already exists"; \
-  fi;
-  
 # RUN UPDATES WITH APT-GET
 RUN  apt-get update \
   && apt-get upgrade -y \
@@ -71,6 +41,31 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
   && php -r "if (hash_file('SHA384', 'composer-setup.php') === trim(file_get_contents('installer.sig'))) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); unlink('installer.sig');} echo PHP_EOL;" \
   && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
   && php -r "unlink('composer-setup.php'); unlink('installer.sig');"
+
+# BUILD ARGUMENTS
+ARG DOCKER_APACHE_RUN_USER=www-data
+ARG DOCKER_APACHE_RUN_GROUP=www-data
+ARG DOCKER_APACHE_RUN_UID=33
+ARG DOCKER_APACHE_RUN_GID=33
+
+ENV PATH="/var/www/html/vendor/bin:${PATH}"
+
+# CREATE USER IF NEW AND SET AS APACHE USER AND GROUP
+RUN set -xe; \
+  \
+  if [ -z $(getent group $DOCKER_APACHE_RUN_GROUP) ]; then \
+    echo "Creating group $DOCKER_APACHE_RUN_GROUP"; \
+    groupadd --gid $DOCKER_APACHE_RUN_GID $DOCKER_APACHE_RUN_GROUP; \
+  else \
+    echo "Ignoring group $DOCKER_APACHE_RUN_GROUP: already exists"; \
+  fi; \
+  \
+  if [ -z $(getent passwd $DOCKER_APACHE_RUN_USER) ]; then \
+    echo "Creating user $DOCKER_APACHE_RUN_USER"; \
+    useradd $DOCKER_APACHE_RUN_USER --uid $DOCKER_APACHE_RUN_UID --gid $DOCKER_APACHE_RUN_GROUP --create-home --shell /bin/bash; \
+  else \
+    echo "Ignoring user $DOCKER_APACHE_RUN_USER: already exists"; \
+  fi;
 
 # ENABLE APACHE REWRITE MODULE 
 RUN a2enmod rewrite
