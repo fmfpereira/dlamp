@@ -55,23 +55,28 @@ ARG DOCKER_APACHE_RUN_GROUP=www-data
 ARG DOCKER_APACHE_RUN_UID=33
 ARG DOCKER_APACHE_RUN_GID=33
 
+# ENVIRONMENT VARIABLES
+ENV APACHE_RUN_USER=$DOCKER_APACHE_RUN_USER
+ENV APACHE_RUN_GROUP=$DOCKER_APACHE_RUN_GROUP
+ENV APACHE_RUN_UID=$DOCKER_APACHE_RUN_UID
+ENV APACHE_RUN_GID=$DOCKER_APACHE_RUN_GID
 ENV PATH="/var/www/html/vendor/bin:${PATH}"
 
 # CREATE USER IF NEW AND SET AS APACHE USER AND GROUP
 RUN set -xe; \
   \
-  if [ -z $(getent group $DOCKER_APACHE_RUN_GROUP) ]; then \
-    echo "Creating group $DOCKER_APACHE_RUN_GROUP"; \
-    groupadd --gid $DOCKER_APACHE_RUN_GID $DOCKER_APACHE_RUN_GROUP; \
+  if [ -z $(getent group $APACHE_RUN_GROUP) ]; then \
+    echo "Creating group $APACHE_RUN_GROUP"; \
+    groupadd --gid $APACHE_RUN_GID $APACHE_RUN_GROUP; \
   else \
-    echo "Ignoring group $DOCKER_APACHE_RUN_GROUP: already exists"; \
+    echo "Ignoring group $APACHE_RUN_GROUP: already exists"; \
   fi; \
   \
-  if [ -z $(getent passwd $DOCKER_APACHE_RUN_USER) ]; then \
-    echo "Creating user $DOCKER_APACHE_RUN_USER"; \
-    useradd $DOCKER_APACHE_RUN_USER --uid $DOCKER_APACHE_RUN_UID --gid $DOCKER_APACHE_RUN_GROUP --create-home --shell /bin/bash; \
+  if [ -z $(getent passwd $APACHE_RUN_USER) ]; then \
+    echo "Creating user $APACHE_RUN_USER"; \
+    useradd $APACHE_RUN_USER --uid $APACHE_RUN_UID --gid $APACHE_RUN_GROUP --create-home --shell /bin/bash; \
   else \
-    echo "Ignoring user $DOCKER_APACHE_RUN_USER: already exists"; \
+    echo "Ignoring user $APACHE_RUN_USER: already exists"; \
   fi;
 
 # ENABLE APACHE REWRITE MODULE 
