@@ -10,9 +10,10 @@ services:
     # Configuration options that are applied at build time.
     build: 
       # Using Dockerfile
-      context: .docker/php5.6
+      context: .docker/php
       # Overrides build arguments, which are environment variables accessible only during the build process.
       args:
+        - DOCKER_PHP_VERSION=7
         - DOCKER_APACHE_RUN_USER=www-data
         - DOCKER_APACHE_RUN_GROUP=www-data
         - DOCKER_APACHE_RUN_UID=33
