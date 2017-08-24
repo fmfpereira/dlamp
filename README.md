@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/fmfpereira/dlamp.svg?branch=master)](https://travis-ci.org/fmfpereira/dlamp)
+
 # README
 
 dLAMP is a Docker Compose configuration to run LAMP development stack containers.
@@ -33,8 +35,7 @@ Project structure:
      - import (automatically import MySQL dumps files when the container named volume is created)
 - docker-compose.yml (Docker Compose file)
 - .docker (Docker files)
-  - php5.6 (PHP 5.6 Dockerfile folder)
-  - php7 (PHP 7 Dockerfile folder)
+  - php (PHP Dockerfile folder)
 
 ## Requirements
 - docker
@@ -46,16 +47,20 @@ Project structure:
 
 - Edit docker-compose.yml file.
     - Select PHP version:
-        - For PHP 7 use .docker/php7. For PHP 5.6 use .docker/php5.6.
+        - dLamp uses official PHP images. To see available PHP versions check "version"-apache tags at [Docker hub](https://hub.docker.com/_/php/) and replace DOCKER_PHP_VERSION ARG.
+        - Eg. PHP 7 DOCKER_PHP_VERSION=7. For PHP 5 use DOCKER_PHP_VERSION=5
             ```yml
             # Docker compose services.
             services:
-            # Docker web service.
+              # Docker web service.
               web:
                 # Configuration options that are applied at build time.
                 build: 
                   # Using Dockerfile
-                  context: .docker/php5.6
+                  context: .docker/php
+                  # Overrides build arguments, which are environment variables accessible only during the build process.
+                  args:
+                    - DOCKER_PHP_VERSION=7
             ```    
     - Select which user and group will be used for the Apache process:
         - When using Docker for Linux the file owner uid and gid will be shared across both host and container.
@@ -66,6 +71,7 @@ Project structure:
         ```yml
         # Overrides build arguments, which are environment variables accessible only during the build process.
         args:
+          - DOCKER_PHP_VERSION=7
           - DOCKER_APACHE_RUN_USER=www-data
           - DOCKER_APACHE_RUN_GROUP=www-data
           - DOCKER_APACHE_RUN_UID=33
