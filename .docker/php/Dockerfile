@@ -81,3 +81,4 @@ RUN set -xe; \
 
 # ENABLE APACHE REWRITE MODULE 
 RUN a2enmod rewrite
+

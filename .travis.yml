@@ -28,4 +28,5 @@ script:
   - docker-compose build --build-arg DOCKER_PHP_VERSION=7 web
   - docker-compose up -d
   - docker ps
-  - docker-compose down  
+  - docker-compose down
+
