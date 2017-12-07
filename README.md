@@ -45,13 +45,13 @@ Project structure:
 
 - [Download](https://github.com/fmfpereira/dlamp/releases) or [clone](https://github.com/fmfpereira/dlamp.git) the project.
 
-- **Note:** xdebug is not yet compatible with PHP7.2, the latest release from official Docker PHP image. We recomend to use DOCKER_PHP_VERSION=7.1 
-until a stable release is lunched.
+- **Note:** xdebug is not yet compatible with PHP7.2, the latest release from official Docker PHP image. We recommend to use DOCKER_PHP_VERSION=7.1 
+until a stable release is launched.
 
 - Edit docker-compose.yml file.
     - Select PHP version:
-        - dLamp uses official PHP images. To see available PHP versions check "version"-apache tags at [Docker hub](https://hub.docker.com/_/php/) and replace DOCKER_PHP_VERSION ARG.
-        - Eg. PHP 7 DOCKER_PHP_VERSION=7. For PHP 5 use DOCKER_PHP_VERSION=5
+        - dLAMP uses official PHP images. To see available PHP versions check "version"-apache tags at [Docker hub](https://hub.docker.com/_/php/) and replace DOCKER_PHP_VERSION ARG.
+        - Ex. PHP 7 DOCKER_PHP_VERSION=7. For PHP 5 use DOCKER_PHP_VERSION=5
             ```yml
             # Docker compose services.
             services:
@@ -116,8 +116,8 @@ until a stable release is lunched.
                 ```
             - In this configuration the web container has been explicitly mapped to port 80 and the db container randomly mapped to port 32769.
         - Each port mapping on the host must be unique per running container. If you need to explicitly map ports on the host, each host port must be unique per running container.
-            - Eg. You can explicitly map container port 80 (WWW) to host port 80, but you must be sure that no other host process or container is running on the port.
-            - Eg. If you need to run two dLAMP projects at the same time, either leave the default options to generate the host ports randomly or explicitly map different unused ports.
+            - Ex. You can explicitly map container port 80 (WWW) to host port 80, but you must be sure that no other host process or container is running on the port.
+            - Ex. If you need to run two dLAMP projects at the same time, either leave the default options to generate the host ports randomly or explicitly map different unused ports.
 
     - If you want to know more details about docker-compose.yml configuration options, check the [Docker Compose file version 3 reference](https://docs.docker.com/compose/compose-file/).
 
@@ -177,7 +177,7 @@ until a stable release is lunched.
     - Apache process user will be created and assigned at build time. Each time you change any DOCKER_APACHE_RUN_* variable you must re-build the image.
 
 - Windows
-    - If you use this project on other path rather than C:\Users (Eg. E:\\) the containers may not start.
+    - If you use this project on other path rather than C:\Users (Ex. E:\\) the containers may not start.
         - You should add the path to Shared Folders on Docker options, if available.
         - If you are still struggling to run the project, try to run it on any C:\Users sub-folder.
 
