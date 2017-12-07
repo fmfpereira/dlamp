@@ -45,6 +45,8 @@ Project structure:
 
 - [Download](https://github.com/fmfpereira/dlamp/releases) or [clone](https://github.com/fmfpereira/dlamp.git) the project.
 
+- *Note:* xdebug is not yet compatible with PHP7.2, the latest release from official Docker PHP image. We recomend to use DOCKER_PHP_VERSION=7.1 until a stable release is lunched.
+
 - Edit docker-compose.yml file.
     - Select PHP version:
         - dLamp uses official PHP images. To see available PHP versions check "version"-apache tags at [Docker hub](https://hub.docker.com/_/php/) and replace DOCKER_PHP_VERSION ARG.
