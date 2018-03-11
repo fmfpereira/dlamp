@@ -47,7 +47,7 @@ Project structure:
 
 - Each supported PHP major version has a specific branch.
 
-    - [For PHP t you should use https://github.com/fmfpereira/dlamp/tree/php-5.x repository](https://github.com/fmfpereira/dlamp/tree/php-5.x)
+    - [For PHP 5 you should use https://github.com/fmfpereira/dlamp/tree/php-5.x repository](https://github.com/fmfpereira/dlamp/tree/php-5.x)
     - [For PHP 7 you should use https://github.com/fmfpereira/dlamp/tree/php-7.x repository](https://github.com/fmfpereira/dlamp/tree/php-7.x)
 
 - Edit docker-compose.yml file.
