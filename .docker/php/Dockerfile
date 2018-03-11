@@ -34,7 +34,7 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 RUN docker-php-ext-install gd json mbstring pdo pdo_mysql zip opcache intl xsl
     
 # INSTALL XDEBUG
-RUN pecl install xdebug
+RUN pecl install xdebug-2.5.5
 
 # SET XDEBUG CONFIGURATION
 RUN echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)\n" >> /usr/local/etc/php/conf.d/xdebug.ini \

@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/fmfpereira/dlamp.svg?branch=master)](https://travis-ci.org/fmfpereira/dlamp)
+## PHP 5.6 [![Build Status](https://travis-ci.org/fmfpereira/dlamp.svg?branch=dev-5.6-build)](https://travis-ci.org/fmfpereira/dlamp), PHP 7.0 [![Build Status](https://travis-ci.org/fmfpereira/dlamp.svg?branch=dev-7.1-build)](https://travis-ci.org/fmfpereira/dlamp), PHP 7.1 [![Build Status](https://travis-ci.org/fmfpereira/dlamp.svg?branch=dev-7.1-build)](https://travis-ci.org/fmfpereira/dlamp), PHP 7.2 [![Build Status](https://travis-ci.org/fmfpereira/dlamp.svg?branch=dev-7.2-build)](https://travis-ci.org/fmfpereira/dlamp)
 
 # README
 
@@ -45,8 +45,10 @@ Project structure:
 
 - [Download](https://github.com/fmfpereira/dlamp/releases) or [clone](https://github.com/fmfpereira/dlamp.git) the project.
 
-- **Note:** xdebug is not yet compatible with PHP7.2, the latest release from official Docker PHP image. We recommend to use DOCKER_PHP_VERSION=7.1 
-until a stable release is launched.
+- Each supported PHP major version has a specific branch.
+
+    - [For PHP 5 you should use https://github.com/fmfpereira/dlamp/tree/php-5.x repository](https://github.com/fmfpereira/dlamp/tree/php-5.x)
+    - [For PHP 7 you should use https://github.com/fmfpereira/dlamp/tree/php-7.x repository](https://github.com/fmfpereira/dlamp/tree/php-7.x)
 
 - Edit docker-compose.yml file.
     - Select PHP version:
