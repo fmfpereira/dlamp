@@ -1,5 +1,5 @@
 # SET DEFAULT PHP VERSION
-ARG DOCKER_PHP_VERSION=7
+ARG DOCKER_PHP_VERSION=5
 
 # USE ARG PHP_VERSION
 FROM php:${DOCKER_PHP_VERSION}-apache
@@ -31,8 +31,8 @@ RUN  apt-get update \
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
 
 # INSTALL PHP EXTENSIONS
-RUN docker-php-ext-install gd json mbstring pdo pdo_mysql zip opcache intl xsl
-    
+RUN docker-php-ext-install gd json mbstring pdo pdo_mysql mysqli zip opcache intl xsl
+
 # INSTALL XDEBUG
 RUN pecl install xdebug-2.5.5
 
